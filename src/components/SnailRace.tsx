@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ConfettiComponent from './ConfettiComponent';
 
 // Snail character SVG component
 const SnailIcon = ({ className }: { className?: string }) => (
@@ -49,15 +50,20 @@ const SnailRace: React.FC<SnailRaceProps> = ({ className }) => {
   const [finishPosition, setFinishPosition] = useState(0);
   const [winner, setWinner] = useState<string | null>(null);
   const [snailPositions, setSnailPositions] = useState<{ [key: string]: number }>({});
+  const [showConfetti, setShowConfetti] = useState(false);
   const startSoundRef = useRef<HTMLAudioElement | null>(null);
   const finishSoundRef = useRef<HTMLAudioElement | null>(null);
   const confettiRef = useRef<HTMLDivElement>(null);
+  const trackContainerRef = useRef<HTMLDivElement>(null);
   
-  // Determine the finish line position based on window width
+  // Determine the finish line position based on container width
   useEffect(() => {
     const handleResize = () => {
-      // Set finish line to 80% of window width
-      setFinishPosition(window.innerWidth * 0.8);
+      if (trackContainerRef.current) {
+        // Set finish line to 85% of the container width to ensure it's visible
+        const containerWidth = trackContainerRef.current.clientWidth;
+        setFinishPosition(containerWidth * 0.85 - 20); // Subtract padding/margin to ensure visibility
+      }
     };
     
     handleResize(); // Initial call
@@ -90,6 +96,9 @@ const SnailRace: React.FC<SnailRaceProps> = ({ className }) => {
   // Start the race with improved animation
   const startRace = () => {
     if (isRacing) return;
+    
+    // Reset states
+    setShowConfetti(false);
     
     // Play start sound
     if (startSoundRef.current) {
@@ -151,6 +160,9 @@ const SnailRace: React.FC<SnailRaceProps> = ({ className }) => {
           finishSoundRef.current.currentTime = 0;
           finishSoundRef.current.play().catch(e => console.log("Audio play failed:", e));
         }
+        
+        // Trigger confetti celebration
+        setShowConfetti(true);
       }
       
       setIsRacing(false);
@@ -163,7 +175,7 @@ const SnailRace: React.FC<SnailRaceProps> = ({ className }) => {
   };
 
   return (
-    <div className={`relative w-full overflow-hidden ${className}`}>
+    <div ref={trackContainerRef} className={`relative w-full overflow-hidden ${className}`}>
       {/* Audio elements - hidden */}
       <div className="sr-only">
         <audio ref={startSoundRef} preload="auto" />
@@ -171,7 +183,12 @@ const SnailRace: React.FC<SnailRaceProps> = ({ className }) => {
       </div>
       
       {/* Race track */}
-      <div className="relative w-full h-96 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg shadow-inner p-4 overflow-hidden">
+      <div className="relative w-full h-96 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-lg shadow-inner p-4">
+        {/* Confetti celebration when a snail wins */}
+        {showConfetti && <div className="absolute inset-0 z-50 pointer-events-none">
+          <ConfettiComponent autoFire={true} hideButton={true} />
+        </div>}
+        
         {/* Track texture */}
         <div className="absolute inset-0 opacity-10" 
              style={{backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'2\' cy=\'2\' r=\'1\' fill=\'%23000\'/%3E%3C/svg%3E")'}} />
@@ -195,6 +212,39 @@ const SnailRace: React.FC<SnailRaceProps> = ({ className }) => {
               <span className="text-sm font-bold text-white rotate-90 whitespace-nowrap">FINISH</span>
             </div>
           </div>
+          
+          {/* Checkered finish flag pattern */}
+          <div 
+            className="absolute top-0 left-0 h-full w-6 overflow-hidden"
+            style={{ 
+              backgroundImage: `repeating-linear-gradient(
+                0deg,
+                #000000 0px,
+                #000000 10px,
+                #ffffff 10px,
+                #ffffff 20px
+              )`,
+              left: '-3px'
+            }}
+          ></div>
+          
+          {/* Finish line animation effect */}
+          <motion.div
+            className="absolute top-0 left-0 w-1 h-full bg-yellow-300 opacity-80"
+            animate={{
+              opacity: [0, 0.8, 0],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              repeatType: "loop"
+            }}
+          ></motion.div>
+          
+          {/* Finish banner */}
+          <div className="absolute top-4 -left-14 w-28 rounded-full bg-red-600 px-2 py-1 shadow-lg transform -rotate-12">
+            <span className="text-white text-xs font-bold text-center block">FINISH LINE</span>
+          </div>
         </div>
         
         {/* Snail lanes */}
@@ -210,8 +260,8 @@ const SnailRace: React.FC<SnailRaceProps> = ({ className }) => {
                 {/* Slime trail effect */}
                 <SlimeTrail x={snailX} color={snail.color} />
                 
-                {/* Snail name tag */}
-                <div className="absolute left-3 top-0 bg-white dark:bg-gray-900 px-2 -translate-y-1/2 text-xs font-medium rounded shadow-sm">
+                {/* Snail name tag - repositioned to be visible and not covered by start line */}
+                <div className="absolute left-16 top-0 bg-white dark:bg-gray-900 px-2 -translate-y-1/2 text-xs font-medium rounded shadow-sm z-20">
                   {snail.name}
                 </div>
                 
