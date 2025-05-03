@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from '../../components/Navbar';
 import SnailRace from '../../components/SnailRace';
+import PinballGame from '../../components/PinballGame';
 import { motion } from 'framer-motion';
 
 export default function GamesPage() {
@@ -44,11 +45,29 @@ export default function GamesPage() {
             </div>
           </motion.section>
           
-          {/* Placeholder for Future Games */}
+          {/* Pinball Game Section */}
           <motion.section
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
+          >
+            <div className="p-6">
+              <h2 className="text-2xl font-bold mb-4">Eager Snail Pinball: Still In Progress...</h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-6">
+                Test your skills with our virtual pinball game! Control the flippers, hit the bumpers, and connect with Acadiana Pinball enthusiasts!
+              </p>
+              
+              {/* PinballGame Component Integration */}
+              <PinballGame className="mb-4" />
+            </div>
+          </motion.section>
+          
+          {/* More Games Teaser */}
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
             className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden p-6"
           >
             <h2 className="text-2xl font-bold mb-4">More Games Coming Soon!</h2>

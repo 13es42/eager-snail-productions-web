@@ -7,9 +7,10 @@ import { motion } from 'framer-motion';
 
 interface ConfettiComponentProps {
   autoFire?: boolean;
+  hideButton?: boolean;
 }
 
-const ConfettiComponent: React.FC<ConfettiComponentProps> = ({ autoFire = false }) => {
+const ConfettiComponent: React.FC<ConfettiComponentProps> = ({ autoFire = false, hideButton = false }) => {
     const { width, height } = useWindowSize();
     const [isConfettiVisible, setIsConfettiVisible] = useState(false);
     const [leftCannonWind, setLeftCannonWind] = useState(1.0);
@@ -79,27 +80,29 @@ const ConfettiComponent: React.FC<ConfettiComponentProps> = ({ autoFire = false 
                     />
                 </div>
             )}
-            <motion.button
-                onClick={fireConfetti}
-                disabled={buttonClicked}
-                className={`px-6 py-3 rounded-full font-medium relative overflow-hidden transition-all duration-300 ${
-                    buttonClicked 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-purple-600 to-pink-500 hover:shadow-lg hover:shadow-purple-500/30 text-white'
-                }`}
-                whileHover={buttonClicked ? {} : { scale: 1.05 }}
-                whileTap={buttonClicked ? {} : { scale: 0.95 }}
-            >
-                {buttonClicked ? "Woohoo!" : "Fire Confetti!"}
-                {buttonClicked && (
-                    <motion.span
-                        className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-500/20"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                    />
-                )}
-            </motion.button>
+            {!hideButton && (
+                <motion.button
+                    onClick={fireConfetti}
+                    disabled={buttonClicked}
+                    className={`px-6 py-3 rounded-full font-medium relative overflow-hidden transition-all duration-300 ${
+                        buttonClicked 
+                        ? 'bg-gray-400 cursor-not-allowed' 
+                        : 'bg-gradient-to-r from-purple-600 to-pink-500 hover:shadow-lg hover:shadow-purple-500/30 text-white'
+                    }`}
+                    whileHover={buttonClicked ? {} : { scale: 1.05 }}
+                    whileTap={buttonClicked ? {} : { scale: 0.95 }}
+                >
+                    {buttonClicked ? "Woohoo!" : "Fire Confetti!"}
+                    {buttonClicked && (
+                        <motion.span
+                            className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-500/20"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
+                        />
+                    )}
+                </motion.button>
+            )}
         </div>
     );
 };

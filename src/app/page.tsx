@@ -86,7 +86,7 @@ export default function Home() {
             >
               <h2 className="text-2xl md:text-3xl font-bold" id="about">About Me</h2>
               <p className="text-gray-600 dark:text-gray-300">
-                I'm a software engineer passionate about building modern web applications 
+                I'm Russell, a software engineer passionate about building modern web applications 
                 with the latest technologies. At Eager Snail Productions, I combine 
                 professional expertise with creative flair.
               </p>
