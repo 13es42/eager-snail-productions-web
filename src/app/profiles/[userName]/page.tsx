@@ -1,35 +1,22 @@
-import {Metadata} from "next";
+import { Metadata } from "next";
 
+// Correct Props interface to match Next.js expectations
 type Props = {
-    params: {
-        userName: string
-    }
+  params: {
+    userName: string;
+  };
+  searchParams: Record<string, string | string[] | undefined>;
+};
+
+export default function ProfilePage({ params }: Props) {
+  const { userName } = params;
+  return <h1>Details about user {userName}</h1>;
 }
 
-// this only matters for metadata for search and you can find it in the dev tools.
-// You can also see the title in the browser tab.
-// export const generateMetadata = async ({params}: Props): Promise<Metadata> => {
-//     const title = await new Promise((resolve) => {
-//         setTimeout(() => {
-//             resolve(`User ${params.userName}`)
-//         }, 100)
-//     })
-//     return {
-//         title: `Profile: ${title}`
-//     }
-// }
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { userName } = params;
 
-// export const generateMetadata = async ({params}: Props): Promise<Metadata> => {
-//     const title = await new Promise((resolve) => {
-//         resolve(`User ${params.userName}`)
-//     })
-//     return {
-//         title: `Profile: ${title}`
-//     }
-// }
-
-
-
-export default function featuredProfiles({ params }: Props) {
-    return <h1>Details about user {params.userName}</h1>
+  return {
+    title: `${userName}'s Profile | Eager Snail Productions`,
+  };
 }
